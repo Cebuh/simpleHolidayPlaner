@@ -1,0 +1,73 @@
+{"Time":"2024-06-14T10:53:33.198646+02:00","Action":"start","Package":"github.com/cebuh/simpleHolidayPlaner/cmd"}
+{"Time":"2024-06-14T10:53:33.198739+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/cmd","Output":"?   \tgithub.com/cebuh/simpleHolidayPlaner/cmd\t[no test files]\n"}
+{"Time":"2024-06-14T10:53:33.198815+02:00","Action":"start","Package":"github.com/cebuh/simpleHolidayPlaner/cmd/api"}
+{"Time":"2024-06-14T10:53:33.198857+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/cmd/api","Output":"?   \tgithub.com/cebuh/simpleHolidayPlaner/cmd/api\t[no test files]\n"}
+{"Time":"2024-06-14T10:53:33.198933+02:00","Action":"start","Package":"github.com/cebuh/simpleHolidayPlaner/cmd/migrate"}
+{"Time":"2024-06-14T10:53:33.19896+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/cmd/migrate","Output":"?   \tgithub.com/cebuh/simpleHolidayPlaner/cmd/migrate\t[no test files]\n"}
+{"Time":"2024-06-14T10:53:33.198888+02:00","Action":"skip","Package":"github.com/cebuh/simpleHolidayPlaner/cmd/api","Elapsed":0}
+{"Time":"2024-06-14T10:53:33.198751+02:00","Action":"skip","Package":"github.com/cebuh/simpleHolidayPlaner/cmd","Elapsed":0}
+{"Time":"2024-06-14T10:53:33.198976+02:00","Action":"skip","Package":"github.com/cebuh/simpleHolidayPlaner/cmd/migrate","Elapsed":0}
+{"Time":"2024-06-14T10:53:33.199053+02:00","Action":"start","Package":"github.com/cebuh/simpleHolidayPlaner/config"}
+{"Time":"2024-06-14T10:53:33.199106+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/config","Output":"?   \tgithub.com/cebuh/simpleHolidayPlaner/config\t[no test files]\n"}
+{"Time":"2024-06-14T10:53:33.199152+02:00","Action":"skip","Package":"github.com/cebuh/simpleHolidayPlaner/config","Elapsed":0}
+{"Time":"2024-06-14T10:53:33.199194+02:00","Action":"start","Package":"github.com/cebuh/simpleHolidayPlaner/db"}
+{"Time":"2024-06-14T10:53:33.199244+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/db","Output":"?   \tgithub.com/cebuh/simpleHolidayPlaner/db\t[no test files]\n"}
+{"Time":"2024-06-14T10:53:33.199258+02:00","Action":"skip","Package":"github.com/cebuh/simpleHolidayPlaner/db","Elapsed":0}
+{"Time":"2024-06-14T10:53:33.797491+02:00","Action":"start","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth"}
+{"Time":"2024-06-14T10:53:33.799517+02:00","Action":"run","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth","Test":"TestCreateJWT"}
+{"Time":"2024-06-14T10:53:33.799554+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth","Test":"TestCreateJWT","Output":"=== RUN   TestCreateJWT\n"}
+{"Time":"2024-06-14T10:53:33.799916+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth","Test":"TestCreateJWT","Output":"--- PASS: TestCreateJWT (0.00s)\n"}
+{"Time":"2024-06-14T10:53:33.799943+02:00","Action":"pass","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth","Test":"TestCreateJWT","Elapsed":0}
+{"Time":"2024-06-14T10:53:33.799958+02:00","Action":"run","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth","Test":"TestHashPassword"}
+{"Time":"2024-06-14T10:53:33.799974+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth","Test":"TestHashPassword","Output":"=== RUN   TestHashPassword\n"}
+{"Time":"2024-06-14T10:53:33.799989+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth","Test":"TestHashPassword","Output":"--- PASS: TestHashPassword (0.08s)\n"}
+{"Time":"2024-06-14T10:53:33.80001+02:00","Action":"pass","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth","Test":"TestHashPassword","Elapsed":0.08}
+{"Time":"2024-06-14T10:53:33.800518+02:00","Action":"run","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth","Test":"TestComparePasswords"}
+{"Time":"2024-06-14T10:53:33.800542+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth","Test":"TestComparePasswords","Output":"=== RUN   TestComparePasswords\n"}
+{"Time":"2024-06-14T10:53:33.800553+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth","Test":"TestComparePasswords","Output":"--- PASS: TestComparePasswords (0.22s)\n"}
+{"Time":"2024-06-14T10:53:33.80056+02:00","Action":"pass","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth","Test":"TestComparePasswords","Elapsed":0.22}
+{"Time":"2024-06-14T10:53:33.800566+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth","Output":"PASS\n"}
+{"Time":"2024-06-14T10:53:33.800571+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth","Output":"ok  \tgithub.com/cebuh/simpleHolidayPlaner/service/auth\t(cached)\n"}
+{"Time":"2024-06-14T10:53:33.800587+02:00","Action":"pass","Package":"github.com/cebuh/simpleHolidayPlaner/service/auth","Elapsed":0.003}
+{"Time":"2024-06-14T10:53:33.82973+02:00","Action":"start","Package":"github.com/cebuh/simpleHolidayPlaner/service/team"}
+{"Time":"2024-06-14T10:53:33.830512+02:00","Action":"start","Package":"github.com/cebuh/simpleHolidayPlaner/service/user"}
+{"Time":"2024-06-14T10:53:33.830579+02:00","Action":"start","Package":"github.com/cebuh/simpleHolidayPlaner/types"}
+{"Time":"2024-06-14T10:53:33.830601+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/types","Output":"?   \tgithub.com/cebuh/simpleHolidayPlaner/types\t[no test files]\n"}
+{"Time":"2024-06-14T10:53:33.830627+02:00","Action":"skip","Package":"github.com/cebuh/simpleHolidayPlaner/types","Elapsed":0}
+{"Time":"2024-06-14T10:53:33.830642+02:00","Action":"start","Package":"github.com/cebuh/simpleHolidayPlaner/utils"}
+{"Time":"2024-06-14T10:53:33.830657+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/utils","Output":"?   \tgithub.com/cebuh/simpleHolidayPlaner/utils\t[no test files]\n"}
+{"Time":"2024-06-14T10:53:33.830665+02:00","Action":"skip","Package":"github.com/cebuh/simpleHolidayPlaner/utils","Elapsed":0}
+{"Time":"2024-06-14T10:53:33.831216+02:00","Action":"run","Package":"github.com/cebuh/simpleHolidayPlaner/service/user","Test":"TestUserServiceHandlers"}
+{"Time":"2024-06-14T10:53:33.831226+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/user","Test":"TestUserServiceHandlers","Output":"=== RUN   TestUserServiceHandlers\n"}
+{"Time":"2024-06-14T10:53:33.831233+02:00","Action":"run","Package":"github.com/cebuh/simpleHolidayPlaner/service/user","Test":"TestUserServiceHandlers/should_fail_if_the_user_payload_is_not_valid"}
+{"Time":"2024-06-14T10:53:33.831237+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/user","Test":"TestUserServiceHandlers/should_fail_if_the_user_payload_is_not_valid","Output":"=== RUN   TestUserServiceHandlers/should_fail_if_the_user_payload_is_not_valid\n"}
+{"Time":"2024-06-14T10:53:33.831244+02:00","Action":"run","Package":"github.com/cebuh/simpleHolidayPlaner/service/user","Test":"TestUserServiceHandlers/should_run_if_email_is_valid"}
+{"Time":"2024-06-14T10:53:33.831251+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/user","Test":"TestUserServiceHandlers/should_run_if_email_is_valid","Output":"=== RUN   TestUserServiceHandlers/should_run_if_email_is_valid\n"}
+{"Time":"2024-06-14T10:53:33.831257+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/user","Test":"TestUserServiceHandlers","Output":"--- PASS: TestUserServiceHandlers (0.00s)\n"}
+{"Time":"2024-06-14T10:53:33.831265+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/user","Test":"TestUserServiceHandlers/should_fail_if_the_user_payload_is_not_valid","Output":"    --- PASS: TestUserServiceHandlers/should_fail_if_the_user_payload_is_not_valid (0.00s)\n"}
+{"Time":"2024-06-14T10:53:33.831271+02:00","Action":"pass","Package":"github.com/cebuh/simpleHolidayPlaner/service/user","Test":"TestUserServiceHandlers/should_fail_if_the_user_payload_is_not_valid","Elapsed":0}
+{"Time":"2024-06-14T10:53:33.831275+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/user","Test":"TestUserServiceHandlers/should_run_if_email_is_valid","Output":"    --- PASS: TestUserServiceHandlers/should_run_if_email_is_valid (0.00s)\n"}
+{"Time":"2024-06-14T10:53:33.831277+02:00","Action":"pass","Package":"github.com/cebuh/simpleHolidayPlaner/service/user","Test":"TestUserServiceHandlers/should_run_if_email_is_valid","Elapsed":0}
+{"Time":"2024-06-14T10:53:33.83128+02:00","Action":"pass","Package":"github.com/cebuh/simpleHolidayPlaner/service/user","Test":"TestUserServiceHandlers","Elapsed":0}
+{"Time":"2024-06-14T10:53:33.831282+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/user","Output":"PASS\n"}
+{"Time":"2024-06-14T10:53:33.831286+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/user","Output":"ok  \tgithub.com/cebuh/simpleHolidayPlaner/service/user\t(cached)\n"}
+{"Time":"2024-06-14T10:53:33.831292+02:00","Action":"pass","Package":"github.com/cebuh/simpleHolidayPlaner/service/user","Elapsed":0.001}
+{"Time":"2024-06-14T10:53:34.150414+02:00","Action":"run","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers"}
+{"Time":"2024-06-14T10:53:34.150518+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers","Output":"=== RUN   TestTeamServiceHandlers\n"}
+{"Time":"2024-06-14T10:53:34.150556+02:00","Action":"run","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers/should_run_if_team_is_created"}
+{"Time":"2024-06-14T10:53:34.150566+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers/should_run_if_team_is_created","Output":"=== RUN   TestTeamServiceHandlers/should_run_if_team_is_created\n"}
+{"Time":"2024-06-14T10:53:34.150626+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers","Output":"--- PASS: TestTeamServiceHandlers (0.00s)\n"}
+{"Time":"2024-06-14T10:53:34.150635+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers/should_run_if_team_is_created","Output":"    --- PASS: TestTeamServiceHandlers/should_run_if_team_is_created (0.00s)\n"}
+{"Time":"2024-06-14T10:53:34.150649+02:00","Action":"pass","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers/should_run_if_team_is_created","Elapsed":0}
+{"Time":"2024-06-14T10:53:34.150655+02:00","Action":"pass","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers","Elapsed":0}
+{"Time":"2024-06-14T10:53:34.150661+02:00","Action":"run","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers2"}
+{"Time":"2024-06-14T10:53:34.150664+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers2","Output":"=== RUN   TestTeamServiceHandlers2\n"}
+{"Time":"2024-06-14T10:53:34.150672+02:00","Action":"run","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers2/should_fail_if_team_exists"}
+{"Time":"2024-06-14T10:53:34.150686+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers2/should_fail_if_team_exists","Output":"=== RUN   TestTeamServiceHandlers2/should_fail_if_team_exists\n"}
+{"Time":"2024-06-14T10:53:34.150813+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers2","Output":"--- PASS: TestTeamServiceHandlers2 (0.00s)\n"}
+{"Time":"2024-06-14T10:53:34.150818+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers2/should_fail_if_team_exists","Output":"    --- PASS: TestTeamServiceHandlers2/should_fail_if_team_exists (0.00s)\n"}
+{"Time":"2024-06-14T10:53:34.150821+02:00","Action":"pass","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers2/should_fail_if_team_exists","Elapsed":0}
+{"Time":"2024-06-14T10:53:34.150853+02:00","Action":"pass","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Test":"TestTeamServiceHandlers2","Elapsed":0}
+{"Time":"2024-06-14T10:53:34.150856+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Output":"PASS\n"}
+{"Time":"2024-06-14T10:53:34.151823+02:00","Action":"output","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Output":"ok  \tgithub.com/cebuh/simpleHolidayPlaner/service/team\t0.321s\n"}
+{"Time":"2024-06-14T10:53:34.152884+02:00","Action":"pass","Package":"github.com/cebuh/simpleHolidayPlaner/service/team","Elapsed":0.323}
