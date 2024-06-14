@@ -14,7 +14,8 @@ import (
 
 func TestTeamServiceHandlers(t *testing.T) {
 	teamStore := &mockTeamStore{}
-	handler := NewHandler(teamStore)
+	userStore := &mockUserStore{}
+	handler := NewHandler(teamStore, userStore)
 
 	t.Run("should run if team is created",
 		func(t *testing.T) {
@@ -61,7 +62,8 @@ func (m *mockTeamStore) GetTeamByName(name string) (*types.Team, error) {
 // Interface returns team
 func TestTeamServiceHandlers2(t *testing.T) {
 	teamStore := &mockTeamStore2{}
-	handler := NewHandler(teamStore)
+	userStore := &mockUserStore{}
+	handler := NewHandler(teamStore, userStore)
 
 	t.Run("should fail if team exists",
 		func(t *testing.T) {
@@ -101,4 +103,19 @@ func (m *mockTeamStore2) CreateTeam(types.Team) error {
 
 func (m *mockTeamStore2) GetTeamByName(name string) (*types.Team, error) {
 	return &types.Team{}, nil
+}
+
+
+type mockUserStore struct{}
+
+func (m *mockUserStore) GetUserByEmail(email string) (*types.User, error) {
+	return &types.User{}, nil
+}
+
+func (m *mockUserStore) GetUserById(id string) (*types.User, error) {
+	return nil, nil
+}
+
+func (m *mockUserStore) CreateUser(types.User) error {
+	return nil
 }
