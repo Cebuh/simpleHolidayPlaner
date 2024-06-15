@@ -1,0 +1,43 @@
+- support posgre sql
+
+- implement go air (hot reload)
+- setup docker and docker compose
+
+- create a database seeder
+    - seed users
+    - seed teams
+    - seed user_teams
+    - seed requests
+
+- team needs a teamlead
+- only teamlead can invite to team 
+- only teamlead can edit team & remove member
+
+- user needs rights (admin, member)
+- user can get an team invite from the teamlead of a team
+- user can manually be created by a admin
+    - user will be informed by an email with a password which needs to be changed when first login
+- user can manually be added to a team
+
+- forgot password
+
+- vacation request 
+    - TABLE "Requests 
+        - "id, requestedFrom, teamId, fromDate, toDate, info, status, dayFactor (forenoon etc.)
+            - status = "OPEN, SUBSTITUTED_MEMBER, SUBSTITUTED_TEAMLEAD, APPROVED, DECLINED, REJECTED"
+    - TABLE "VacationApproval"
+        - "requestID, approverId (userId), status"
+            - status = "OPEN, APPROVED, DECLINED"
+    - create a request
+    - set state of a request
+    
+
+- user profile informations
+    - vacation sum
+    - current vacations
+    - rename a user
+    - add user profile picture
+
+- user vacation history
+    - vacations which are already used (approved and is already in the past)
+    
