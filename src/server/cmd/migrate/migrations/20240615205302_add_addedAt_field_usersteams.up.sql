@@ -1,0 +1,1 @@
+ALTER TABLE users_teams ADD COLUMN AddedAt TIMESTAMP not null DEFAULT current_timestamp
