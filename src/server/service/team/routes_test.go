@@ -20,7 +20,7 @@ func TestTeamServiceHandlers(t *testing.T) {
 	t.Run("should run if team is created",
 		func(t *testing.T) {
 			payload := types.AddTeamPayload{
-				Name:     "Team A",
+				Name: "Team A",
 			}
 
 			marshalled, _ := json.Marshal(payload)
@@ -40,9 +40,8 @@ func TestTeamServiceHandlers(t *testing.T) {
 		})
 }
 
-
-
 type mockTeamStore struct{}
+
 func (m *mockTeamStore) GetAllTeams() ([]types.Team, error) {
 	return nil, nil
 }
@@ -59,6 +58,18 @@ func (m *mockTeamStore) GetTeamByName(name string) (*types.Team, error) {
 	return nil, fmt.Errorf("Team not exists")
 }
 
+func (m *mockTeamStore) AddUserToTeam(userId, teamId string) error {
+	return nil
+}
+
+func (m *mockTeamStore) RemoveUserFromTeam(userId, teamId string) error {
+	return nil
+}
+
+func (m *mockTeamStore) RenameTeam(name, teamId string) error {
+	return nil
+}
+
 // Interface returns team
 func TestTeamServiceHandlers2(t *testing.T) {
 	teamStore := &mockTeamStore2{}
@@ -68,7 +79,7 @@ func TestTeamServiceHandlers2(t *testing.T) {
 	t.Run("should fail if team exists",
 		func(t *testing.T) {
 			payload := types.AddTeamPayload{
-				Name:     "Team A",
+				Name: "Team A",
 			}
 
 			marshalled, _ := json.Marshal(payload)
@@ -89,6 +100,7 @@ func TestTeamServiceHandlers2(t *testing.T) {
 }
 
 type mockTeamStore2 struct{}
+
 func (m *mockTeamStore2) GetAllTeams() ([]types.Team, error) {
 	return nil, nil
 }
@@ -105,17 +117,29 @@ func (m *mockTeamStore2) GetTeamByName(name string) (*types.Team, error) {
 	return &types.Team{}, nil
 }
 
+func (m *mockTeamStore2) AddUserToTeam(userId, teamId string) error {
+	return nil
+}
+
+func (m *mockTeamStore2) RemoveUserFromTeam(userId, teamId string) error {
+	return nil
+}
+func (m *mockTeamStore2) RenameTeam(name, teamId string) error {
+	return nil
+}
 
 type mockUserStore struct{}
 
 func (m *mockUserStore) GetUserByEmail(email string) (*types.User, error) {
 	return &types.User{}, nil
 }
-
 func (m *mockUserStore) GetUserById(id string) (*types.User, error) {
 	return nil, nil
 }
-
 func (m *mockUserStore) CreateUser(types.User) error {
 	return nil
+}
+
+func (m *mockUserStore) GetUsersFromTeam(teamId string) ([]types.TeamUser, error) {
+	return nil, nil
 }

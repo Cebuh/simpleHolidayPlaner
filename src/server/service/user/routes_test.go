@@ -77,3 +77,7 @@ func (m *mockUserStore) GetUserById(id string) (*types.User, error) {
 func (m *mockUserStore) CreateUser(types.User) error {
 	return nil
 }
+
+func (m *mockUserStore) GetUsersFromTeam(teamId string) ([]types.TeamUser, error) {
+	return nil, nil
+}

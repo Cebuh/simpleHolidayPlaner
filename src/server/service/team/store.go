@@ -88,6 +88,39 @@ func (s *Store) GetTeamById(id string) (*types.Team, error) {
 	return t, nil
 }
 
+func (s *Store) AddUserToTeam(userId, teamId string) error {
+	_, err := s.db.Exec("INSERT INTO users_teams (user_id, team_id) VALUES (?, ?)",
+		userId, teamId)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Store) RemoveUserFromTeam(userId, teamId string) error {
+	_, err := s.db.Exec("DELETE FROM users_teams WHERE user_id = ? AND team_id = ?",
+		userId, teamId)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Store) RenameTeam(name, teamId string) error {
+	_, err := s.db.Exec("UPDATE teams SET Name = ? WHERE id = ?",
+		name, teamId)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func readTeamData(rows *sql.Rows) (*types.Team, error) {
 	team := new(types.Team)
 	err := rows.Scan(

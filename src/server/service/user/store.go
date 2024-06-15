@@ -54,6 +54,21 @@ func scanUserRow(rows *sql.Rows) (*types.User, error) {
 	return user, nil
 }
 
+func scanTeamUserRow(rows *sql.Rows) (*types.TeamUser, error) {
+	user := new(types.TeamUser)
+	err := rows.Scan(
+		&user.Id,
+		&user.Name,
+		&user.Email,
+		&user.AddedAt,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
 func (s *Store) GetUserById(id string) (*types.User, error) {
 	rows, err := s.db.Query("SELECT * FROM users WHERE id = ?", id)
 	if err != nil {
@@ -73,6 +88,24 @@ func (s *Store) GetUserById(id string) (*types.User, error) {
 	}
 
 	return u, nil
+}
+
+func (s *Store) GetUsersFromTeam(teamId string) ([]types.TeamUser, error) {
+	rows, err := s.db.Query("select users.id, users.name, users.email, ut.AddedAt  from users inner join users_teams ut ON ut.user_id  = users.Id where ut.team_id = ?", teamId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	userList := make([]types.TeamUser, 0)
+	for rows.Next() {
+		u, err := scanTeamUserRow(rows)
+		if err != nil {
+			return nil, err
+		}
+		userList = append(userList, *u)
+	}
+
+	return userList, nil
 }
 
 func (s *Store) CreateUser(user types.User) error {
