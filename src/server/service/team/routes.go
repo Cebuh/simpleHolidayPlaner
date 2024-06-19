@@ -100,12 +100,12 @@ func (h *Handler) handleAddUserToTeam(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, err := h.store.GetTeamById(payload.TeamId); err != nil {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("team with id %s doe not exists", payload.TeamId))
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("team with id %s does not exists", payload.TeamId))
 		return
 	}
 
 	if _, err := h.userStore.GetUserById(payload.UserId); err != nil {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("user with id %s doe not exists", payload.UserId))
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("user with id %s does not exists", payload.UserId))
 		return
 	}
 

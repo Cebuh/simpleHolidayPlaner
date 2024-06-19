@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/cebuh/simpleHolidayPlaner/types"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
@@ -43,33 +44,87 @@ func TestTeamServiceHandlers(t *testing.T) {
 		})
 }
 
-func TestTeamServiceHandlers2(t *testing.T) {
+func Test_CreateTeam_Should_Fail_IfTeamAlreadyExists(t *testing.T) {
 	teamStore := &mockTeam{}
 	teamStore.GetTeamByNameMock = func(name string) (*types.Team, error) { return &types.Team{}, nil }
 	userStore := &mockUser{}
+	userStore.GetUserByIdMock = func(id string) (*types.User, error) { return nil, fmt.Errorf("user does not exists") }
 	handler := NewHandler(teamStore, userStore)
+	payload := types.AddTeamPayload{
+		Name: "Team A",
+	}
 
-	t.Run("should fail if team exists",
-		func(t *testing.T) {
-			payload := types.AddTeamPayload{
-				Name: "Team A",
-			}
+	marshalled, _ := json.Marshal(payload)
+	req, err := http.NewRequest(http.MethodPost, "/teams", bytes.NewBuffer(marshalled))
+	if err != nil {
+		t.Fatal(err)
+	}
 
-			marshalled, _ := json.Marshal(payload)
-			req, err := http.NewRequest(http.MethodPost, "/teams", bytes.NewBuffer(marshalled))
-			if err != nil {
-				t.Fatal(err)
-			}
+	testHttp := httptest.NewRecorder()
+	router := mux.NewRouter()
+	router.HandleFunc("/teams", handler.handleAddTeam).Methods(http.MethodPost)
+	router.ServeHTTP(testHttp, req)
 
-			testHttp := httptest.NewRecorder()
-			router := mux.NewRouter()
-			router.HandleFunc("/teams", handler.handleAddTeam).Methods(http.MethodPost)
-			router.ServeHTTP(testHttp, req)
+	if testHttp.Code != http.StatusConflict {
+		t.Errorf("expected status code %d, but got %d", http.StatusConflict, testHttp.Code)
+	}
 
-			if testHttp.Code != http.StatusConflict {
-				t.Errorf("expected status code %d, but got %d", http.StatusConflict, testHttp.Code)
-			}
-		})
+}
+
+func Test_AddUserToTeam_Should_Fail_IfUserDontExists(t *testing.T) {
+	teamStore := &mockTeam{}
+	teamStore.GetTeamByIdMock = func(id string) (*types.Team, error) { return &types.Team{}, nil }
+	userStore := &mockUser{}
+	userStore.GetUserByIdMock = func(id string) (*types.User, error) { return nil, fmt.Errorf("user does not exists") }
+	handler := NewHandler(teamStore, userStore)
+	payload := types.UserToTeamPayload{
+		UserId:   uuid.NewString(),
+		TeamId:   uuid.NewString(),
+		RoleType: types.Member,
+	}
+
+	marshalled, _ := json.Marshal(payload)
+	req, err := http.NewRequest(http.MethodPost, "/teams/addUser", bytes.NewBuffer(marshalled))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	testHttp := httptest.NewRecorder()
+	router := mux.NewRouter()
+	router.HandleFunc("/teams/addUser", handler.handleAddUserToTeam).Methods(http.MethodPost)
+	router.ServeHTTP(testHttp, req)
+
+	if testHttp.Code != http.StatusBadRequest {
+		t.Errorf("expected status code %d, but got %d", http.StatusBadRequest, testHttp.Code)
+	}
+}
+
+func Test_AddUserToTeam_Should_Fail_IfTeamDontExists(t *testing.T) {
+	teamStore := &mockTeam{}
+	teamStore.GetTeamByIdMock = func(id string) (*types.Team, error) { return nil, fmt.Errorf("team does not exists") }
+	userStore := &mockUser{}
+	userStore.GetUserByIdMock = func(id string) (*types.User, error) { return &types.User{}, nil }
+	handler := NewHandler(teamStore, userStore)
+	payload := types.UserToTeamPayload{
+		UserId:   uuid.NewString(),
+		TeamId:   uuid.NewString(),
+		RoleType: types.Member,
+	}
+
+	marshalled, _ := json.Marshal(payload)
+	req, err := http.NewRequest(http.MethodPost, "/teams/addUser", bytes.NewBuffer(marshalled))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	testHttp := httptest.NewRecorder()
+	router := mux.NewRouter()
+	router.HandleFunc("/teams/addUser", handler.handleAddUserToTeam).Methods(http.MethodPost)
+	router.ServeHTTP(testHttp, req)
+
+	if testHttp.Code != http.StatusBadRequest {
+		t.Errorf("expected status code %d, but got %d", http.StatusBadRequest, testHttp.Code)
+	}
 }
 
 type mockUser struct {
