@@ -129,7 +129,7 @@ func (h *Handler) handleAddUserToTeam(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.store.AddUserToTeam(payload.UserId, payload.TeamId); err != nil {
+	if err := h.store.AddUserToTeam(payload.UserId, payload.TeamId, payload.RoleType); err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}

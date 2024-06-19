@@ -120,8 +120,8 @@ func createUsersAndTeams(db *sql.DB) {
 		user2 := generatedUsers[index2]
 
 		randomTeam := generatedTeams[randomNumber]
-		teamStore.AddUserToTeam(user1.Id, randomTeam.Id)
-		teamStore.AddUserToTeam(user2.Id, randomTeam.Id)
+		teamStore.AddUserToTeam(user1.Id, randomTeam.Id, types.Member)
+		teamStore.AddUserToTeam(user2.Id, randomTeam.Id, types.Member)
 
 		generatedUsers = removeUser(generatedUsers, index1)
 		generatedUsers = removeUser(generatedUsers, index2)

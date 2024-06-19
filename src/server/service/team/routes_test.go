@@ -99,7 +99,7 @@ type mockTeam struct {
 	RenameTeamMock         func(name, teamId string) error
 	GetTeamByIdMock        func(id string) (*types.Team, error)
 	GetTeamByNameMock      func(name string) (*types.Team, error)
-	AddUserToTeamMock      func(userId, teamId string) error
+	AddUserToTeamMock      func(userId, teamId, roleType string) error
 	RemoveUserFromTeamMock func(userId, teamId string) error
 }
 
@@ -119,8 +119,8 @@ func (m *mockTeam) GetTeamByName(name string) (*types.Team, error) {
 	return m.GetTeamByNameMock(name)
 }
 
-func (m *mockTeam) AddUserToTeam(userId, teamId string) error {
-	return m.AddUserToTeamMock(userId, teamId)
+func (m *mockTeam) AddUserToTeam(userId, teamId, roleType string) error {
+	return m.AddUserToTeamMock(userId, teamId, roleType)
 }
 
 func (m *mockTeam) RemoveUserFromTeam(userId, teamId string) error {
