@@ -4,9 +4,9 @@
 - setup docker and docker compose
 
 - create a database seeder
-    - seed users
-    - seed teams
-    - seed user_teams
+    - [x] seed users
+    - [x] seed teams
+    - [x] seed user_teams
     - seed requests
 
 - team needs a teamlead
