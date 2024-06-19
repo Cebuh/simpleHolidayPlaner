@@ -13,8 +13,11 @@ import (
 )
 
 func TestTeamServiceHandlers(t *testing.T) {
-	teamStore := &mockTeamStore{}
-	userStore := &mockUserStore{}
+	teamStore := &mockTeam{}
+	teamStore.GetTeamByNameMock = func(name string) (*types.Team, error) { return nil, fmt.Errorf("Not found") }
+	teamStore.CreateTeamMock = func(t types.Team) error { return nil }
+
+	userStore := &mockUser{}
 	handler := NewHandler(teamStore, userStore)
 
 	t.Run("should run if team is created",
@@ -40,40 +43,10 @@ func TestTeamServiceHandlers(t *testing.T) {
 		})
 }
 
-type mockTeamStore struct{}
-
-func (m *mockTeamStore) GetAllTeams() ([]types.Team, error) {
-	return nil, nil
-}
-
-func (m *mockTeamStore) GetTeamById(id string) (*types.Team, error) {
-	return nil, nil
-}
-
-func (m *mockTeamStore) CreateTeam(types.Team) error {
-	return nil
-}
-
-func (m *mockTeamStore) GetTeamByName(name string) (*types.Team, error) {
-	return nil, fmt.Errorf("Team not exists")
-}
-
-func (m *mockTeamStore) AddUserToTeam(userId, teamId string) error {
-	return nil
-}
-
-func (m *mockTeamStore) RemoveUserFromTeam(userId, teamId string) error {
-	return nil
-}
-
-func (m *mockTeamStore) RenameTeam(name, teamId string) error {
-	return nil
-}
-
-// Interface returns team
 func TestTeamServiceHandlers2(t *testing.T) {
-	teamStore := &mockTeamStore2{}
-	userStore := &mockUserStore{}
+	teamStore := &mockTeam{}
+	teamStore.GetTeamByNameMock = func(name string) (*types.Team, error) { return &types.Team{}, nil }
+	userStore := &mockUser{}
 	handler := NewHandler(teamStore, userStore)
 
 	t.Run("should fail if team exists",
@@ -99,47 +72,61 @@ func TestTeamServiceHandlers2(t *testing.T) {
 		})
 }
 
-type mockTeamStore2 struct{}
-
-func (m *mockTeamStore2) GetAllTeams() ([]types.Team, error) {
-	return nil, nil
+type mockUser struct {
+	GetUserByEmailMock   func(email string) (*types.User, error)
+	GetUserByIdMock      func(id string) (*types.User, error)
+	CreateUserMock       func(types.User) error
+	GetUsersFromTeamMock func(teamId string) ([]types.TeamUser, error)
 }
 
-func (m *mockTeamStore2) GetTeamById(id string) (*types.Team, error) {
-	return nil, nil
+func (m *mockUser) GetUserByEmail(email string) (*types.User, error) {
+	return m.GetUserByEmailMock(email)
+}
+func (m *mockUser) GetUserById(id string) (*types.User, error) {
+	return m.GetUserByIdMock(id)
+}
+func (m *mockUser) CreateUser(u types.User) error {
+	return m.CreateUserMock(u)
 }
 
-func (m *mockTeamStore2) CreateTeam(types.Team) error {
+func (m *mockUser) GetUsersFromTeam(teamId string) ([]types.TeamUser, error) {
+	return m.GetUsersFromTeamMock(teamId)
+}
+
+type mockTeam struct {
+	GetAllTeamsMock        func() ([]types.Team, error)
+	CreateTeamMock         func(types.Team) error
+	RenameTeamMock         func(name, teamId string) error
+	GetTeamByIdMock        func(id string) (*types.Team, error)
+	GetTeamByNameMock      func(name string) (*types.Team, error)
+	AddUserToTeamMock      func(userId, teamId string) error
+	RemoveUserFromTeamMock func(userId, teamId string) error
+}
+
+func (m *mockTeam) GetAllTeams() ([]types.Team, error) {
+	return m.GetAllTeamsMock()
+}
+
+func (m *mockTeam) GetTeamById(id string) (*types.Team, error) {
+	return m.GetTeamByIdMock(id)
+}
+
+func (m *mockTeam) CreateTeam(t types.Team) error {
+	return m.CreateTeamMock(t)
+}
+
+func (m *mockTeam) GetTeamByName(name string) (*types.Team, error) {
+	return m.GetTeamByNameMock(name)
+}
+
+func (m *mockTeam) AddUserToTeam(userId, teamId string) error {
+	return m.AddUserToTeamMock(userId, teamId)
+}
+
+func (m *mockTeam) RemoveUserFromTeam(userId, teamId string) error {
+	return m.RemoveUserFromTeamMock(userId, teamId)
+}
+
+func (m *mockTeam) RenameTeam(name, teamId string) error {
 	return nil
-}
-
-func (m *mockTeamStore2) GetTeamByName(name string) (*types.Team, error) {
-	return &types.Team{}, nil
-}
-
-func (m *mockTeamStore2) AddUserToTeam(userId, teamId string) error {
-	return nil
-}
-
-func (m *mockTeamStore2) RemoveUserFromTeam(userId, teamId string) error {
-	return nil
-}
-func (m *mockTeamStore2) RenameTeam(name, teamId string) error {
-	return nil
-}
-
-type mockUserStore struct{}
-
-func (m *mockUserStore) GetUserByEmail(email string) (*types.User, error) {
-	return &types.User{}, nil
-}
-func (m *mockUserStore) GetUserById(id string) (*types.User, error) {
-	return nil, nil
-}
-func (m *mockUserStore) CreateUser(types.User) error {
-	return nil
-}
-
-func (m *mockUserStore) GetUsersFromTeam(teamId string) ([]types.TeamUser, error) {
-	return nil, nil
 }

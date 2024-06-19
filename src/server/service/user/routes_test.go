@@ -12,7 +12,8 @@ import (
 )
 
 func TestUserServiceHandlers(t *testing.T) {
-	userStore := &mockUserStore{}
+	userStore := &mockUser{}
+	userStore.GetUserByEmailMock = func(email string) (*types.User, error) { return &types.User{}, nil }
 	handler := NewHandler(userStore)
 
 	t.Run("should fail if the user payload is not valid",
@@ -64,20 +65,23 @@ func TestUserServiceHandlers(t *testing.T) {
 		})
 }
 
-type mockUserStore struct{}
-
-func (m *mockUserStore) GetUserByEmail(email string) (*types.User, error) {
-	return &types.User{}, nil
+type mockUser struct {
+	GetUserByEmailMock   func(email string) (*types.User, error)
+	GetUserByIdMock      func(id string) (*types.User, error)
+	CreateUserMock       func(types.User) error
+	GetUsersFromTeamMock func(teamId string) ([]types.TeamUser, error)
 }
 
-func (m *mockUserStore) GetUserById(id string) (*types.User, error) {
-	return nil, nil
+func (m *mockUser) GetUserByEmail(email string) (*types.User, error) {
+	return m.GetUserByEmailMock(email)
+}
+func (m *mockUser) GetUserById(id string) (*types.User, error) {
+	return m.GetUserByIdMock(id)
+}
+func (m *mockUser) CreateUser(u types.User) error {
+	return m.CreateUserMock(u)
 }
 
-func (m *mockUserStore) CreateUser(types.User) error {
-	return nil
-}
-
-func (m *mockUserStore) GetUsersFromTeam(teamId string) ([]types.TeamUser, error) {
-	return nil, nil
+func (m *mockUser) GetUsersFromTeam(teamId string) ([]types.TeamUser, error) {
+	return m.GetUsersFromTeamMock(teamId)
 }
