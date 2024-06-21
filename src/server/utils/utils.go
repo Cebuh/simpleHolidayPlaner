@@ -29,6 +29,16 @@ func WriteError(w http.ResponseWriter, status int, err error) {
 	WriteJson(w, status, map[string]string{"error": err.Error()})
 }
 
+func ValidatePayload(w http.ResponseWriter, payload any) bool {
+	if err := Validate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
+		return false
+	}
+
+	return true
+}
+
 func IsValidUUID(u string) bool {
 	_, err := uuid.Parse(u)
 	return err == nil

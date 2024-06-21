@@ -3,14 +3,16 @@ package types
 import "time"
 
 type UserToTeamPayload struct {
-	UserId   string `json:"userId" validate:"required"`
-	TeamId   string `json:"teamId" validate:"required"`
-	RoleType string `json:"roleType" validate:"required"`
+	UserId   string   `json:"userId" validate:"required"`
+	TeamId   string   `json:"teamId" validate:"required"`
+	RoleType UserRole `json:"userRole" validate:"required"`
 }
 
+type UserRole int
+
 const (
-	Administrator = "admin"
-	Member        = "member"
+	Administrator UserRole = iota
+	Member
 )
 
 type TeamUser struct {
@@ -18,5 +20,5 @@ type TeamUser struct {
 	Name     string    `json:"name"`
 	Email    string    `json:"email"`
 	AddedAt  time.Time `json:"addedAt"`
-	RoleType string    `json:"role"`
+	RoleType UserRole  `json:"userRole"`
 }

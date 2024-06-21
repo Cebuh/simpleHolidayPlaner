@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/cebuh/simpleHolidayPlaner/service/invite"
 	"github.com/cebuh/simpleHolidayPlaner/service/team"
 	"github.com/cebuh/simpleHolidayPlaner/service/user"
 	"github.com/gorilla/mux"
@@ -33,6 +34,10 @@ func (s *Server) Run() error {
 	teamStore := team.NewStore(s.db)
 	teamHandler := team.NewHandler(teamStore, userStore)
 	teamHandler.RegisterRoutes(subrouter)
+
+	inviteStore := invite.NewStore(s.db)
+	inviteHandler := invite.NewHandler(inviteStore, userStore, teamStore)
+	inviteHandler.RegisterRoutes(subrouter)
 
 	log.Println("Listen on ", s.address)
 	return http.ListenAndServe(s.address, router)
