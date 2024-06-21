@@ -1,7 +1,14 @@
 - support posgre sql
 
 - implement go air (hot reload)
+
 - setup docker and docker compose
+
+- [x] use utc times when creating tables
+
+- implement transactions for database actions
+
+- implement swagger for documentation and testing purpose
 
 - create a database seeder
     - [x] seed users
@@ -9,11 +16,16 @@
     - [x] seed user_teams
     - seed requests
 
-- team needs a teamlead
-- only teamlead can invite to team 
-- only teamlead can edit team & remove member
+- [x] team needs admin, member roletypes
+- [x] rename a team
+- only admin can invite to team 
+- only admin can edit team & remove member
+- admin can send invites 
+    - [x] Table 'Invites'
+        - Id, InviteType ('TEAMINVITE, 'GROUPINVITE'), FromUser, ToUser, status ('DECLINED, APPROVED ,OPEN')
+    - when user accept invite, the user joins the team
 
-- user needs rights (admin, member)
+- user needs rights (admin, member) (?)
 - user can get an team invite from the teamlead of a team
 - user can manually be created by a admin
     - user will be informed by an email with a password which needs to be changed when first login
