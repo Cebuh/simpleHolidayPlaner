@@ -27,21 +27,18 @@ jobs:
         path: |
           ~/.cache/go-build
           ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('src/backend/go.sum') }}
+        key: ${{ runner.os }}-go-${{ hashFiles('src/server/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-
 
-    - name: Change to backend directory
-      run: cd src/backend
-
     - name: Install dependencies
-      working-directory: src/backend
+      working-directory: src/server
       run: go mod tidy
 
     - name: Run tests
-      working-directory: src/backend
+      working-directory: src/server
       run: go test ./...
 
     - name: Build the application
-      working-directory: src/backend
+      working-directory: src/server
       run: go build -v ./...
