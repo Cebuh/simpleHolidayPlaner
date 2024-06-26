@@ -19,6 +19,7 @@ type TeamStore interface {
 
 type InviteStore interface {
 	CreateInvite(invite Invite) error
+	DeleteInvite(execable interface{}, id string) error
 	GetInvite(id string) (*Invite, error)
 	GetInviteInfosFrom(from string) ([]InviteInfo, error)
 	GetInviteInfosTo(to string) ([]InviteInfo, error)

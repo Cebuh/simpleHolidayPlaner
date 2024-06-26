@@ -27,6 +27,17 @@ func (s *Store) CreateInvite(i types.Invite) error {
 	return nil
 }
 
+func (s *Store) DeleteInvite(execable interface{}, id string) error {
+	_, err := utils.Exec(execable, "DELETE FROM invites where Id = ?",
+		id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *Store) GetInvite(id string) (*types.Invite, error) {
 	rows, err := s.db.Query(`SELECT * from invites i where i.Id = ?`, id)
 

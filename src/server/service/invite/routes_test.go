@@ -45,9 +45,7 @@ func Test_CreateInvite_Should_Fail_IfUserDontExists(t *testing.T) {
 	router.HandleFunc("/invites", handler.CreateInvite).Methods(http.MethodPost)
 	router.ServeHTTP(testHttp, req)
 
-	if testHttp.Code != http.StatusBadRequest {
-		t.Errorf("expected status code %d, but got %d", http.StatusBadRequest, testHttp.Code)
-	}
+	require.Equal(t, http.StatusBadRequest, testHttp.Code)
 }
 
 func Test_CreateInvite_Should_Pass_IfInviteIsCreated(t *testing.T) {
@@ -80,9 +78,7 @@ func Test_CreateInvite_Should_Pass_IfInviteIsCreated(t *testing.T) {
 	router.HandleFunc("/invites", handler.CreateInvite).Methods(http.MethodPost)
 	router.ServeHTTP(testHttp, req)
 
-	if testHttp.Code != http.StatusCreated {
-		t.Errorf("expected status code %d, but got %d", http.StatusCreated, testHttp.Code)
-	}
+	require.Equal(t, http.StatusCreated, testHttp.Code)
 }
 
 func Test_GetInvites_Should_Pass_ForFrom(t *testing.T) {
@@ -106,9 +102,7 @@ func Test_GetInvites_Should_Pass_ForFrom(t *testing.T) {
 	router.HandleFunc("/invites/from/{userId}", handler.GetInvitesFromUser).Methods(http.MethodGet)
 	router.ServeHTTP(testHttp, req)
 
-	if testHttp.Code != http.StatusOK {
-		t.Errorf("expected status code %d, but got %d", http.StatusOK, testHttp.Code)
-	}
+	require.Equal(t, http.StatusOK, testHttp.Code)
 }
 
 func Test_GetInvites_Should_Pass_ForTo(t *testing.T) {
@@ -132,9 +126,78 @@ func Test_GetInvites_Should_Pass_ForTo(t *testing.T) {
 	router.HandleFunc("/invites/to/{userId}", handler.GetInvitesToUser).Methods(http.MethodGet)
 	router.ServeHTTP(testHttp, req)
 
-	if testHttp.Code != http.StatusOK {
-		t.Errorf("expected status code %d, but got %d", http.StatusOK, testHttp.Code)
+	require.Equal(t, http.StatusOK, testHttp.Code)
+}
+
+func Test_ApproveInvite_Should_Fail_IfUserIsAlreadyInTeam(t *testing.T) {
+	db, _, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
+	teamStore := &mockTeam{}
+	userStore := &mockUser{}
+	testGuid := uuid.NewString()
+	testUser := types.TeamUser{
+		Id: testGuid,
 	}
+
+	userSlice := make([]types.TeamUser, 0)
+	userSlice = append(userSlice, testUser)
+	userStore.GetUsersFromTeamMock = func(id string) ([]types.TeamUser, error) { return userSlice, nil }
+	inviteStore := &mockInvite{}
+	inviteStore.GetInviteMock = func(id string) (*types.Invite, error) {
+		return &types.Invite{ToUserId: testGuid}, nil
+	}
+	handler := NewHandler(db, inviteStore, userStore, teamStore)
+
+	req, err := http.NewRequest(http.MethodPost, "/invites/"+testGuid+"/approve", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	testHttp := httptest.NewRecorder()
+	router := mux.NewRouter()
+	router.HandleFunc("/invites/{id}/approve", handler.ApproveInvite).Methods(http.MethodPost)
+	router.ServeHTTP(testHttp, req)
+	require.Equal(t, http.StatusBadRequest, testHttp.Code)
+}
+
+func Test_ApproveInvite_Should_Pass_IfUserIsNotInTeam(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	mock.ExpectBegin()
+	mock.ExpectCommit()
+	require.NoError(t, err)
+	defer db.Close()
+	teamStore := &mockTeam{}
+	teamStore.AddUserToTeamMock = func(execable interface{}, userId, teamId string, role types.UserRole) error { return nil }
+	userStore := &mockUser{}
+	testGuid := uuid.NewString()
+	testUser := types.TeamUser{
+		Id: testGuid,
+	}
+
+	userSlice := make([]types.TeamUser, 0)
+	userSlice = append(userSlice, testUser)
+	userStore.GetUsersFromTeamMock = func(id string) ([]types.TeamUser, error) { return userSlice, nil }
+	inviteStore := &mockInvite{}
+	inviteStore.GetInviteMock = func(id string) (*types.Invite, error) {
+		return &types.Invite{ToUserId: uuid.NewString()}, nil
+	}
+	inviteStore.UpdateInviteStatusMock = func(execable interface{}, id string, status types.InviteStatus) error { return nil }
+
+	handler := NewHandler(db, inviteStore, userStore, teamStore)
+
+	req, err := http.NewRequest(http.MethodPost, "/invites/"+testGuid+"/approve", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	testHttp := httptest.NewRecorder()
+	router := mux.NewRouter()
+	router.HandleFunc("/invites/{id}/approve", handler.ApproveInvite).Methods(http.MethodPost)
+	router.ServeHTTP(testHttp, req)
+	require.Equal(t, http.StatusOK, testHttp.Code)
+	err = mock.ExpectationsWereMet()
+	require.NoError(t, err)
 }
 
 type mockInvite struct {
@@ -142,7 +205,12 @@ type mockInvite struct {
 	GetInviteInfosFromMock func(from string) ([]types.InviteInfo, error)
 	GetInviteInfosToMock   func(to string) ([]types.InviteInfo, error)
 	GetInviteMock          func(id string) (*types.Invite, error)
+	DeleteInviteMock       func(execable interface{}, id string) error
 	UpdateInviteStatusMock func(execable interface{}, id string, status types.InviteStatus) error
+}
+
+func (m *mockInvite) DeleteInvite(execable interface{}, id string) error {
+	return m.DeleteInviteMock(execable, id)
 }
 
 func (m *mockInvite) GetInvite(id string) (*types.Invite, error) {

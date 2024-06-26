@@ -9,6 +9,7 @@ import (
 
 	"github.com/cebuh/simpleHolidayPlaner/types"
 	"github.com/gorilla/mux"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUserServiceHandlers(t *testing.T) {
@@ -35,9 +36,7 @@ func TestUserServiceHandlers(t *testing.T) {
 			router.HandleFunc("/register", handler.handleRegister).Methods(http.MethodPost)
 			router.ServeHTTP(testHttp, req)
 
-			if testHttp.Code != http.StatusBadRequest {
-				t.Errorf("expected status code %d, but got %d", http.StatusBadRequest, testHttp.Code)
-			}
+			require.Equal(t, http.StatusBadRequest, testHttp.Code)
 		})
 	t.Run("should run if email is valid",
 		func(t *testing.T) {
@@ -58,10 +57,7 @@ func TestUserServiceHandlers(t *testing.T) {
 			router.HandleFunc("/register", handler.handleRegister).Methods(http.MethodPost)
 			router.ServeHTTP(testHttp, req)
 
-			// Throw Status conflict, when user already exists
-			if testHttp.Code != http.StatusConflict {
-				t.Errorf("expected status code %d, but got %d", http.StatusCreated, testHttp.Code)
-			}
+			require.Equal(t, http.StatusConflict, testHttp.Code)
 		})
 }
 

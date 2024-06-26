@@ -6,7 +6,7 @@
 
 - [x] use utc times when creating tables
 
-- implement transactions for database actions
+- [x] implement transactions for database actions
 
 - implement swagger for documentation and testing purpose
 

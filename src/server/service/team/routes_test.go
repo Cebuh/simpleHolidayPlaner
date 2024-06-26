@@ -43,9 +43,7 @@ func TestTeamServiceHandlers(t *testing.T) {
 			router.HandleFunc("/teams", handler.handleAddTeam).Methods(http.MethodPost)
 			router.ServeHTTP(testHttp, req)
 
-			if testHttp.Code != http.StatusCreated {
-				t.Errorf("expected status code %d, but got %d", http.StatusCreated, testHttp.Code)
-			}
+			require.Equal(t, http.StatusCreated, testHttp.Code)
 		})
 }
 
@@ -73,9 +71,7 @@ func Test_CreateTeam_Should_Fail_IfTeamAlreadyExists(t *testing.T) {
 	router.HandleFunc("/teams", handler.handleAddTeam).Methods(http.MethodPost)
 	router.ServeHTTP(testHttp, req)
 
-	if testHttp.Code != http.StatusConflict {
-		t.Errorf("expected status code %d, but got %d", http.StatusConflict, testHttp.Code)
-	}
+	require.Equal(t, http.StatusConflict, testHttp.Code)
 
 }
 
@@ -105,9 +101,7 @@ func Test_AddUserToTeam_Should_Fail_IfUserDontExists(t *testing.T) {
 	router.HandleFunc("/teams/addUser", handler.handleAddUserToTeam).Methods(http.MethodPost)
 	router.ServeHTTP(testHttp, req)
 
-	if testHttp.Code != http.StatusBadRequest {
-		t.Errorf("expected status code %d, but got %d", http.StatusBadRequest, testHttp.Code)
-	}
+	require.Equal(t, http.StatusBadRequest, testHttp.Code)
 }
 
 func Test_AddUserToTeam_Should_Fail_IfTeamDontExists(t *testing.T) {
@@ -136,9 +130,7 @@ func Test_AddUserToTeam_Should_Fail_IfTeamDontExists(t *testing.T) {
 	router.HandleFunc("/teams/addUser", handler.handleAddUserToTeam).Methods(http.MethodPost)
 	router.ServeHTTP(testHttp, req)
 
-	if testHttp.Code != http.StatusBadRequest {
-		t.Errorf("expected status code %d, but got %d", http.StatusBadRequest, testHttp.Code)
-	}
+	require.Equal(t, http.StatusBadRequest, testHttp.Code)
 }
 
 type mockUser struct {

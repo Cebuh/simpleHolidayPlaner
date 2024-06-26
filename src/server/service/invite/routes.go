@@ -52,8 +52,12 @@ func (h *Handler) DeclineInvite(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 	utils.WithTransaction(ctx, h.db, w, func(tx *sql.Tx) error {
+
 		if err := h.store.UpdateInviteStatus(tx, id, types.DECLINED); err != nil {
-			utils.WriteError(w, http.StatusInternalServerError, err)
+			return err
+		}
+
+		if err := h.store.DeleteInvite(tx, id); err != nil {
 			return err
 		}
 
