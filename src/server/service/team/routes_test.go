@@ -8,18 +8,23 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/cebuh/simpleHolidayPlaner/types"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/stretchr/testify/require"
 )
 
 func TestTeamServiceHandlers(t *testing.T) {
+	db, _, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
 	teamStore := &mockTeam{}
 	teamStore.GetTeamByNameMock = func(name string) (*types.Team, error) { return nil, fmt.Errorf("Not found") }
 	teamStore.CreateTeamMock = func(t types.Team) error { return nil }
 
 	userStore := &mockUser{}
-	handler := NewHandler(teamStore, userStore)
+	handler := NewHandler(db, teamStore, userStore)
 
 	t.Run("should run if team is created",
 		func(t *testing.T) {
@@ -45,11 +50,14 @@ func TestTeamServiceHandlers(t *testing.T) {
 }
 
 func Test_CreateTeam_Should_Fail_IfTeamAlreadyExists(t *testing.T) {
+	db, _, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
 	teamStore := &mockTeam{}
 	teamStore.GetTeamByNameMock = func(name string) (*types.Team, error) { return &types.Team{}, nil }
 	userStore := &mockUser{}
 	userStore.GetUserByIdMock = func(id string) (*types.User, error) { return nil, fmt.Errorf("user does not exists") }
-	handler := NewHandler(teamStore, userStore)
+	handler := NewHandler(db, teamStore, userStore)
 	payload := types.AddTeamPayload{
 		Name: "Team A",
 	}
@@ -72,11 +80,14 @@ func Test_CreateTeam_Should_Fail_IfTeamAlreadyExists(t *testing.T) {
 }
 
 func Test_AddUserToTeam_Should_Fail_IfUserDontExists(t *testing.T) {
+	db, _, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
 	teamStore := &mockTeam{}
 	teamStore.GetTeamByIdMock = func(id string) (*types.Team, error) { return &types.Team{}, nil }
 	userStore := &mockUser{}
 	userStore.GetUserByIdMock = func(id string) (*types.User, error) { return nil, fmt.Errorf("user does not exists") }
-	handler := NewHandler(teamStore, userStore)
+	handler := NewHandler(db, teamStore, userStore)
 	payload := types.UserToTeamPayload{
 		UserId:   uuid.NewString(),
 		TeamId:   uuid.NewString(),
@@ -100,11 +111,14 @@ func Test_AddUserToTeam_Should_Fail_IfUserDontExists(t *testing.T) {
 }
 
 func Test_AddUserToTeam_Should_Fail_IfTeamDontExists(t *testing.T) {
+	db, _, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
 	teamStore := &mockTeam{}
 	teamStore.GetTeamByIdMock = func(id string) (*types.Team, error) { return nil, fmt.Errorf("team does not exists") }
 	userStore := &mockUser{}
 	userStore.GetUserByIdMock = func(id string) (*types.User, error) { return &types.User{}, nil }
-	handler := NewHandler(teamStore, userStore)
+	handler := NewHandler(db, teamStore, userStore)
 	payload := types.UserToTeamPayload{
 		UserId:   uuid.NewString(),
 		TeamId:   uuid.NewString(),
@@ -154,7 +168,7 @@ type mockTeam struct {
 	RenameTeamMock         func(name, teamId string) error
 	GetTeamByIdMock        func(id string) (*types.Team, error)
 	GetTeamByNameMock      func(name string) (*types.Team, error)
-	AddUserToTeamMock      func(userId, teamId string, role types.UserRole) error
+	AddUserToTeamMock      func(execable interface{}, userId, teamId string, role types.UserRole) error
 	RemoveUserFromTeamMock func(userId, teamId string) error
 }
 
@@ -174,8 +188,8 @@ func (m *mockTeam) GetTeamByName(name string) (*types.Team, error) {
 	return m.GetTeamByNameMock(name)
 }
 
-func (m *mockTeam) AddUserToTeam(userId, teamId string, role types.UserRole) error {
-	return m.AddUserToTeamMock(userId, teamId, role)
+func (m *mockTeam) AddUserToTeam(execable interface{}, userId, teamId string, role types.UserRole) error {
+	return m.AddUserToTeamMock(execable, userId, teamId, role)
 }
 
 func (m *mockTeam) RemoveUserFromTeam(userId, teamId string) error {

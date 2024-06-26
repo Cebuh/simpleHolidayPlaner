@@ -25,7 +25,7 @@ type Invite struct {
 	TeamId     string       `json:"teamId"`
 	Status     InviteStatus `json:"status"`
 	CreatedAt  time.Time    `json:"createdAt"`
-	ChangedAt  time.Time    `json:"changedAt"`
+	ChangedAt  *time.Time   `json:"changedAt"`
 }
 
 type InviteInfo struct {

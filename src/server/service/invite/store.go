@@ -27,20 +27,16 @@ func (s *Store) CreateInvite(i types.Invite) error {
 	return nil
 }
 
-func (s *Store) GetInvite(id string) (*types.InviteInfo, error) {
-	rows, err := s.db.Query(`SELECT i.Id, ufrom.name as 'FromUserName', uto.name as 'ToUserName', t.name as 'TeamName', i.status, i.createdAt From invites i
-	inner join users ufrom  on ufrom.id = i.fromUserId 
-	inner join users uto  on uto.id = i.toUserId  
-	inner join teams t  on t.Id = i.teamId 
-	where i.Id = ? `, id)
+func (s *Store) GetInvite(id string) (*types.Invite, error) {
+	rows, err := s.db.Query(`SELECT * from invites i where i.Id = ?`, id)
 
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	invite := new(types.InviteInfo)
+	invite := new(types.Invite)
 	for rows.Next() {
-		invite, err = readInviteInfoData(rows)
+		invite, err = readInviteData(rows)
 		if err != nil {
 			return nil, err
 		}
@@ -76,8 +72,9 @@ func (s *Store) GetInviteInfosFrom(fromUserId string) ([]types.InviteInfo, error
 	return inviteInfos, nil
 }
 
-func (s *Store) UpdateInviteStatus(id string, status types.InviteStatus) error {
-	_, err := s.db.Exec(`UPDATE invites set status = ?, changedAt = UTC_TIMESTAMP where id = ?`, status, id)
+func (s *Store) UpdateInviteStatus(execable interface{}, id string, status types.InviteStatus) error {
+
+	_, err := utils.Exec(execable, `UPDATE invites set status = ?, changedAt = UTC_TIMESTAMP where id = ?`, status, id)
 	if err != nil {
 		return err
 	}
@@ -117,6 +114,24 @@ func readInviteInfoData(rows *sql.Rows) (*types.InviteInfo, error) {
 		&inv.TeamName,
 		&inv.Status,
 		&inv.CreatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return inv, nil
+}
+
+func readInviteData(rows *sql.Rows) (*types.Invite, error) {
+	inv := new(types.Invite)
+	err := rows.Scan(
+		&inv.Id,
+		&inv.FromUserId,
+		&inv.ToUserId,
+		&inv.TeamId,
+		&inv.Status,
+		&inv.InviteType,
+		&inv.CreatedAt,
+		&inv.ChangedAt,
 	)
 	if err != nil {
 		return nil, err

@@ -88,8 +88,8 @@ func (s *Store) GetTeamById(id string) (*types.Team, error) {
 	return t, nil
 }
 
-func (s *Store) AddUserToTeam(userId, teamId string, role types.UserRole) error {
-	_, err := s.db.Exec("INSERT INTO users_teams (user_id, team_id, roletype) VALUES (?, ?, ?)",
+func (s *Store) AddUserToTeam(execable interface{}, userId, teamId string, role types.UserRole) error {
+	_, err := utils.Exec(execable, "INSERT INTO users_teams (user_id, team_id, roletype) VALUES (?, ?, ?)",
 		userId, teamId, role)
 
 	if err != nil {

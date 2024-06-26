@@ -13,14 +13,14 @@ type TeamStore interface {
 	RenameTeam(name, teamId string) error
 	GetTeamById(id string) (*Team, error)
 	GetTeamByName(name string) (*Team, error)
-	AddUserToTeam(userId, teamId string, role UserRole) error
+	AddUserToTeam(execable interface{}, userId, teamId string, role UserRole) error
 	RemoveUserFromTeam(userId, teamId string) error
 }
 
 type InviteStore interface {
 	CreateInvite(invite Invite) error
-	GetInvite(id string) (*InviteInfo, error)
+	GetInvite(id string) (*Invite, error)
 	GetInviteInfosFrom(from string) ([]InviteInfo, error)
 	GetInviteInfosTo(to string) ([]InviteInfo, error)
-	UpdateInviteStatus(id string, status InviteStatus) error
+	UpdateInviteStatus(execable interface{}, id string, status InviteStatus) error
 }

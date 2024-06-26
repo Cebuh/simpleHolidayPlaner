@@ -1,6 +1,7 @@
 package invite
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 
@@ -11,13 +12,14 @@ import (
 )
 
 type Handler struct {
+	db        *sql.DB
 	store     types.InviteStore
 	userStore types.UserStore
 	teamStore types.TeamStore
 }
 
-func NewHandler(store types.InviteStore, userStore types.UserStore, teamStore types.TeamStore) *Handler {
-	return &Handler{store: store, teamStore: teamStore, userStore: userStore}
+func NewHandler(db *sql.DB, store types.InviteStore, userStore types.UserStore, teamStore types.TeamStore) *Handler {
+	return &Handler{db: db, store: store, teamStore: teamStore, userStore: userStore}
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
@@ -28,34 +30,6 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/invites/{id}/decline", h.DeclineInvite).Methods(http.MethodPost)
 }
 
-func (h *Handler) ApproveInvite(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, ok := vars["id"]
-	if !ok {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing invite id"))
-		return
-	}
-
-	// TODO: validator can check this too
-	if !utils.IsValidUUID(id) {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("id is not valid"))
-		return
-	}
-
-	_, err := h.store.GetInvite(id)
-	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
-		return
-	}
-
-	if err := h.store.UpdateInviteStatus(id, types.ACCEPTED); err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
-		return
-	}
-
-	utils.WriteJson(w, http.StatusOK, nil)
-
-}
 func (h *Handler) DeclineInvite(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, ok := vars["id"]
@@ -76,12 +50,72 @@ func (h *Handler) DeclineInvite(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.store.UpdateInviteStatus(id, types.DECLINED); err != nil {
+	ctx := r.Context()
+	utils.WithTransaction(ctx, h.db, w, func(tx *sql.Tx) error {
+		if err := h.store.UpdateInviteStatus(tx, id, types.DECLINED); err != nil {
+			utils.WriteError(w, http.StatusInternalServerError, err)
+			return err
+		}
+
+		utils.WriteJson(w, http.StatusOK, nil)
+		return nil
+	})
+
+}
+func (h *Handler) ApproveInvite(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, ok := vars["id"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing invite id"))
+		return
+	}
+
+	// TODO: validator can check this too
+	if !utils.IsValidUUID(id) {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("id is not valid"))
+		return
+	}
+
+	inv, err := h.store.GetInvite(id)
+	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	utils.WriteJson(w, http.StatusOK, nil)
+	users, err := h.userStore.GetUsersFromTeam(inv.TeamId)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("while loading users from team a error occured %e", err))
+		return
+	}
+
+	userExistsInTeam := false
+	for _, v := range users {
+		if v.Id == inv.ToUserId {
+			userExistsInTeam = true
+			break
+		}
+	}
+
+	if userExistsInTeam {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("user is already a part of the team"))
+		return
+	}
+
+	ctx := r.Context()
+	utils.WithTransaction(ctx, h.db, w, func(tx *sql.Tx) error {
+		if err := h.store.UpdateInviteStatus(tx, id, types.ACCEPTED); err != nil {
+			return err
+		}
+
+		if err := h.teamStore.AddUserToTeam(tx, inv.ToUserId, inv.TeamId, types.Member); err != nil {
+			return err
+		}
+
+		utils.WriteJson(w, http.StatusOK, nil)
+		return nil
+	})
+
 }
 
 func (h *Handler) GetInvitesFromUser(w http.ResponseWriter, r *http.Request) {

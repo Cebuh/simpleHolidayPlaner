@@ -8,19 +8,24 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/cebuh/simpleHolidayPlaner/types"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_CreateInvite_Should_Fail_IfUserDontExists(t *testing.T) {
+	db, _, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
 	teamStore := &mockTeam{}
 	teamStore.GetTeamByIdMock = func(id string) (*types.Team, error) { return &types.Team{}, nil }
 	userStore := &mockUser{}
 	userStore.GetUserByIdMock = func(id string) (*types.User, error) { return nil, fmt.Errorf("user does not exists") }
 	inviteStore := &mockInvite{}
 	inviteStore.CreateInviteMock = func(inv types.Invite) error { return nil }
-	handler := NewHandler(inviteStore, userStore, teamStore)
+	handler := NewHandler(db, inviteStore, userStore, teamStore)
 	payload := types.CreateInvitePayload{
 		FromUserId: uuid.NewString(),
 		ToUserId:   uuid.NewString(),
@@ -46,13 +51,16 @@ func Test_CreateInvite_Should_Fail_IfUserDontExists(t *testing.T) {
 }
 
 func Test_CreateInvite_Should_Pass_IfInviteIsCreated(t *testing.T) {
+	db, _, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
 	teamStore := &mockTeam{}
 	teamStore.GetTeamByIdMock = func(id string) (*types.Team, error) { return &types.Team{}, nil }
 	userStore := &mockUser{}
 	userStore.GetUserByIdMock = func(id string) (*types.User, error) { return &types.User{}, nil }
 	inviteStore := &mockInvite{}
 	inviteStore.CreateInviteMock = func(inv types.Invite) error { return nil }
-	handler := NewHandler(inviteStore, userStore, teamStore)
+	handler := NewHandler(db, inviteStore, userStore, teamStore)
 	payload := types.CreateInvitePayload{
 		FromUserId: uuid.NewString(),
 		ToUserId:   uuid.NewString(),
@@ -78,11 +86,14 @@ func Test_CreateInvite_Should_Pass_IfInviteIsCreated(t *testing.T) {
 }
 
 func Test_GetInvites_Should_Pass_ForFrom(t *testing.T) {
+	db, _, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
 	teamStore := &mockTeam{}
 	userStore := &mockUser{}
 	inviteStore := &mockInvite{}
 	inviteStore.GetInviteInfosFromMock = func(from string) ([]types.InviteInfo, error) { return make([]types.InviteInfo, 0), nil }
-	handler := NewHandler(inviteStore, userStore, teamStore)
+	handler := NewHandler(db, inviteStore, userStore, teamStore)
 
 	testGuid := uuid.NewString()
 	req, err := http.NewRequest(http.MethodGet, "/invites/from/"+testGuid, bytes.NewBuffer(nil))
@@ -101,11 +112,14 @@ func Test_GetInvites_Should_Pass_ForFrom(t *testing.T) {
 }
 
 func Test_GetInvites_Should_Pass_ForTo(t *testing.T) {
+	db, _, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
 	teamStore := &mockTeam{}
 	userStore := &mockUser{}
 	inviteStore := &mockInvite{}
 	inviteStore.GetInviteInfosToMock = func(to string) ([]types.InviteInfo, error) { return make([]types.InviteInfo, 0), nil }
-	handler := NewHandler(inviteStore, userStore, teamStore)
+	handler := NewHandler(db, inviteStore, userStore, teamStore)
 
 	testGuid := uuid.NewString()
 	req, err := http.NewRequest(http.MethodGet, "/invites/to/"+testGuid, nil)
@@ -127,15 +141,15 @@ type mockInvite struct {
 	CreateInviteMock       func(types.Invite) error
 	GetInviteInfosFromMock func(from string) ([]types.InviteInfo, error)
 	GetInviteInfosToMock   func(to string) ([]types.InviteInfo, error)
-	GetInviteMock          func(id string) (*types.InviteInfo, error)
-	UpdateInviteStatusMock func(id string, status types.InviteStatus) error
+	GetInviteMock          func(id string) (*types.Invite, error)
+	UpdateInviteStatusMock func(execable interface{}, id string, status types.InviteStatus) error
 }
 
-func (m *mockInvite) GetInvite(id string) (*types.InviteInfo, error) {
+func (m *mockInvite) GetInvite(id string) (*types.Invite, error) {
 	return m.GetInviteMock(id)
 }
-func (m *mockInvite) UpdateInviteStatus(id string, status types.InviteStatus) error {
-	return m.UpdateInviteStatusMock(id, status)
+func (m *mockInvite) UpdateInviteStatus(execable interface{}, id string, status types.InviteStatus) error {
+	return m.UpdateInviteStatusMock(execable, id, status)
 }
 
 func (m *mockInvite) CreateInvite(inv types.Invite) error {
@@ -177,7 +191,7 @@ type mockTeam struct {
 	RenameTeamMock         func(name, teamId string) error
 	GetTeamByIdMock        func(id string) (*types.Team, error)
 	GetTeamByNameMock      func(name string) (*types.Team, error)
-	AddUserToTeamMock      func(userId, teamId string, role types.UserRole) error
+	AddUserToTeamMock      func(execable interface{}, userId, teamId string, role types.UserRole) error
 	RemoveUserFromTeamMock func(userId, teamId string) error
 }
 
@@ -197,8 +211,8 @@ func (m *mockTeam) GetTeamByName(name string) (*types.Team, error) {
 	return m.GetTeamByNameMock(name)
 }
 
-func (m *mockTeam) AddUserToTeam(userId, teamId string, role types.UserRole) error {
-	return m.AddUserToTeamMock(userId, teamId, role)
+func (m *mockTeam) AddUserToTeam(execable interface{}, userId, teamId string, role types.UserRole) error {
+	return m.AddUserToTeamMock(execable, userId, teamId, role)
 }
 
 func (m *mockTeam) RemoveUserFromTeam(userId, teamId string) error {

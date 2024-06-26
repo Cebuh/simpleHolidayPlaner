@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"log"
 	"math/rand"
@@ -107,6 +108,13 @@ func createUsersAndTeams(db *sql.DB) {
 	removeUser := func(s []types.User, index int) []types.User {
 		return append(s[:index], s[index+1:]...)
 	}
+
+	ctx := context.Background()
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		panic(err)
+	}
+
 	for range 5 {
 		randomNumber := rand.Intn(11)
 
@@ -120,8 +128,8 @@ func createUsersAndTeams(db *sql.DB) {
 		user2 := generatedUsers[index2]
 
 		randomTeam := generatedTeams[randomNumber]
-		teamStore.AddUserToTeam(user1.Id, randomTeam.Id, types.Member)
-		teamStore.AddUserToTeam(user2.Id, randomTeam.Id, types.Member)
+		teamStore.AddUserToTeam(tx, user1.Id, randomTeam.Id, types.Member)
+		teamStore.AddUserToTeam(tx, user2.Id, randomTeam.Id, types.Member)
 
 		generatedUsers = removeUser(generatedUsers, index1)
 		generatedUsers = removeUser(generatedUsers, index2)

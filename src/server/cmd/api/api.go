@@ -32,11 +32,11 @@ func (s *Server) Run() error {
 	userHandler.RegisterRoutes(subrouter)
 
 	teamStore := team.NewStore(s.db)
-	teamHandler := team.NewHandler(teamStore, userStore)
+	teamHandler := team.NewHandler(s.db, teamStore, userStore)
 	teamHandler.RegisterRoutes(subrouter)
 
 	inviteStore := invite.NewStore(s.db)
-	inviteHandler := invite.NewHandler(inviteStore, userStore, teamStore)
+	inviteHandler := invite.NewHandler(s.db, inviteStore, userStore, teamStore)
 	inviteHandler.RegisterRoutes(subrouter)
 
 	log.Println("Listen on ", s.address)

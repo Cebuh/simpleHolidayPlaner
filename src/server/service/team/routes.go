@@ -1,6 +1,7 @@
 package team
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 
@@ -12,19 +13,21 @@ import (
 )
 
 type Handler struct {
+	db        *sql.DB
 	store     types.TeamStore
 	userStore types.UserStore
 }
 
-func NewHandler(store types.TeamStore, userStore types.UserStore) *Handler {
-	return &Handler{store: store, userStore: userStore}
+func NewHandler(db *sql.DB, store types.TeamStore, userStore types.UserStore) *Handler {
+	return &Handler{db: db, store: store, userStore: userStore}
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/teams", h.handleGetAllTeams).Methods(http.MethodGet)
 	router.HandleFunc("/teams/{teamId}", h.handleGetTeam).Methods(http.MethodGet)
 	router.HandleFunc("/teams", h.handleAddTeam).Methods(http.MethodPost)
-	router.HandleFunc("/teams/addUser", h.handleAddUserToTeam).Methods(http.MethodPost)
+	// accept an invite will add the user
+	// router.HandleFunc("/teams/addUser", h.handleAddUserToTeam).Methods(http.MethodPost)
 	router.HandleFunc("/teams/removeUser", h.handleRemoveUserFromTeam).Methods(http.MethodPost)
 	router.HandleFunc("/teams/{teamId}/getUsers", h.handleGetUsersFromTeam).Methods(http.MethodGet)
 	router.HandleFunc("/teams/{teamId}", h.handleRenameTeam).Methods(http.MethodPatch)
@@ -129,10 +132,17 @@ func (h *Handler) handleAddUserToTeam(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.store.AddUserToTeam(payload.UserId, payload.TeamId, payload.RoleType); err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
-		return
-	}
+	ctx := r.Context()
+	utils.WithTransaction(ctx, h.db, w, func(tx *sql.Tx) error {
+
+		if err := h.store.AddUserToTeam(tx, payload.UserId, payload.TeamId, payload.RoleType); err != nil {
+			utils.WriteError(w, http.StatusInternalServerError, err)
+			return err
+		}
+
+		utils.WriteJson(w, http.StatusOK, nil)
+		return nil
+	})
 
 	utils.WriteJson(w, http.StatusOK, nil)
 }
