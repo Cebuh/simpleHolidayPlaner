@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  db:
+    image: mariadb:latest
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: SHP
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+    #   timeout: 8s
+    #   retries: 10
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # migrate:
+  #   image: migrate/migrate
+  #   volumes:
+  #     - ./cmd/migrate/migrations:/migrations
+  #   command:
+  #     [
+  #       "-path",
+  #       "/migrations",
+  #       "-database",
+  #       "mysql://root:admin@tcp(db:3306)/SHP",
+  #       "up",
+  #       "4",
+  #     ]
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+
+  go-service:
+    build: .
+    container_name: go-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+      # - migrate
+    command: ["/app/main"]
