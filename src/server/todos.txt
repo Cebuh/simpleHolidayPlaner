@@ -8,6 +8,8 @@
 
 - [x] implement transactions for database actions
 
+- use swagger
+
 - implement swagger for documentation and testing purpose
 
 - create a database seeder
@@ -21,9 +23,9 @@
 - only admin can invite to team 
 - only admin can edit team & remove member
 - admin can send invites 
-    - [x] Table 'Invites'
+    - [x] Table 'Invites'   
         - Id, InviteType ('TEAMINVITE, 'GROUPINVITE'), FromUser, ToUser, status ('DECLINED, APPROVED ,OPEN')
-    - when user accept invite, the user joins the team
+    - [x] when user accept invite, the user joins the team
 
 - user needs rights (admin, member) (?)
 - user can get an team invite from the teamlead of a team

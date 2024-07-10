@@ -57,9 +57,10 @@ func (h *Handler) DeclineInvite(w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 
-		if err := h.store.DeleteInvite(tx, id); err != nil {
-			return err
-		}
+		// TODO - delete invite when declined? its useful to hold it to show the user the state
+		// if err := h.store.DeleteInvite(tx, id); err != nil {
+		// 	return err
+		// }
 
 		utils.WriteJson(w, http.StatusOK, nil)
 		return nil
