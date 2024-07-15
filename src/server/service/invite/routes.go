@@ -53,7 +53,7 @@ func (h *Handler) DeclineInvite(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	utils.WithTransaction(ctx, h.db, w, func(tx *sql.Tx) error {
 
-		if err := h.store.UpdateInviteStatus(tx, id, types.DECLINED); err != nil {
+		if err := h.store.UpdateInviteStatus(tx, id, types.INVITE_DECLINED); err != nil {
 			return err
 		}
 
@@ -109,7 +109,7 @@ func (h *Handler) ApproveInvite(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 	utils.WithTransaction(ctx, h.db, w, func(tx *sql.Tx) error {
-		if err := h.store.UpdateInviteStatus(tx, id, types.ACCEPTED); err != nil {
+		if err := h.store.UpdateInviteStatus(tx, id, types.INVITE_ACCEPTED); err != nil {
 			return err
 		}
 
@@ -198,7 +198,7 @@ func (h *Handler) CreateInvite(w http.ResponseWriter, r *http.Request) {
 		FromUserId: payload.FromUserId,
 		ToUserId:   payload.ToUserId,
 		TeamId:     payload.TeamId,
-		Status:     types.OPEN,
+		Status:     types.INVITE_OPEN,
 	}
 
 	err := h.store.CreateInvite(invite)

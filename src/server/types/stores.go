@@ -25,3 +25,11 @@ type InviteStore interface {
 	GetInviteInfosTo(to string) ([]InviteInfo, error)
 	UpdateInviteStatus(execable interface{}, id string, status InviteStatus) error
 }
+
+type VacationStore interface {
+	CreateVacationRequest(execable interface{}, request VacationRequest) error
+	GetVacationRequestsForUser(toUserId string) ([]VacationRequest, error)
+	GetVacationRequestsFromUserId(requestedFromId string) ([]VacationRequest, error)
+	UpdateVacationStatus(execable interface{}, requestId string, approverId string, status ApprovalStatus) error
+	GetApprovalsForRequest(requestId string) ([]VacationApproval, error)
+}

@@ -8,6 +8,7 @@ import (
 	"github.com/cebuh/simpleHolidayPlaner/service/invite"
 	"github.com/cebuh/simpleHolidayPlaner/service/team"
 	"github.com/cebuh/simpleHolidayPlaner/service/user"
+	"github.com/cebuh/simpleHolidayPlaner/service/vacation"
 	"github.com/gorilla/mux"
 )
 
@@ -38,6 +39,10 @@ func (s *Server) Run() error {
 	inviteStore := invite.NewStore(s.db)
 	inviteHandler := invite.NewHandler(s.db, inviteStore, userStore, teamStore)
 	inviteHandler.RegisterRoutes(subrouter)
+
+	vacationStore := vacation.NewStore(s.db)
+	vacationHandler := vacation.NewHandler(s.db, userStore, teamStore, vacationStore)
+	vacationHandler.RegisterRoutes(subrouter)
 
 	log.Println("Listen on ", s.address)
 	return http.ListenAndServe(s.address, router)

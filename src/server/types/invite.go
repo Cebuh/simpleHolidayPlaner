@@ -12,9 +12,9 @@ const (
 type InviteStatus int
 
 const (
-	OPEN InviteStatus = iota
-	ACCEPTED
-	DECLINED
+	INVITE_OPEN InviteStatus = iota
+	INVITE_ACCEPTED
+	INVITE_DECLINED
 )
 
 type Invite struct {

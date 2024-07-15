@@ -31,7 +31,7 @@ func Test_CreateInvite_Should_Fail_IfUserDontExists(t *testing.T) {
 		ToUserId:   uuid.NewString(),
 		TeamId:     uuid.NewString(),
 		InviteType: types.Team_Invite,
-		Status:     types.OPEN,
+		Status:     types.INVITE_OPEN,
 	}
 
 	marshalled, _ := json.Marshal(payload)
@@ -64,7 +64,7 @@ func Test_CreateInvite_Should_Pass_IfInviteIsCreated(t *testing.T) {
 		ToUserId:   uuid.NewString(),
 		TeamId:     uuid.NewString(),
 		InviteType: types.Team_Invite,
-		Status:     types.OPEN,
+		Status:     types.INVITE_OPEN,
 	}
 
 	marshalled, _ := json.Marshal(payload)

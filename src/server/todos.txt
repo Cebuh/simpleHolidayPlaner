@@ -1,8 +1,10 @@
 - support posgre sql
 
-- implement go air (hot reload)
+- [x] implement go air (hot reload)
+    - implement air in docker container
 
-- setup docker and docker compose
+- [x] setup docker and docker compose
+    - should create migrations and setup air
 
 - [x] use utc times when creating tables
 
