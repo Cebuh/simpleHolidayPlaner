@@ -32,4 +32,5 @@ type VacationStore interface {
 	GetVacationRequestsFromUserId(requestedFromId string) ([]VacationRequest, error)
 	UpdateVacationStatus(execable interface{}, requestId string, approverId string, status ApprovalStatus) error
 	GetApprovalsForRequest(requestId string) ([]VacationApproval, error)
+	CreateApprovalEntry(execable interface{}, requestId string, approverId string) error
 }

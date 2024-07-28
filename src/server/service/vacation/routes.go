@@ -25,6 +25,31 @@ func NewHandler(db *sql.DB, userStore types.UserStore, teamStore types.TeamStore
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/vacations/request", h.CreateVacationRequest).Methods(http.MethodPost)
+	router.HandleFunc("/vacations/request/updateApproval", h.UpdateRequestApproval).Methods(http.MethodPost)
+}
+
+func (h *Handler) UpdateRequestApproval(w http.ResponseWriter, r *http.Request) {
+	var payload types.VacationApprovalPayload
+	if err := utils.ParseJson(r, &payload); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+	}
+	if err := utils.Validate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
+		return
+	}
+
+	ctx := r.Context()
+	utils.WithTransaction(ctx, h.db, w, func(tx *sql.Tx) error {
+
+		if err := h.vacationStore.UpdateVacationStatus(tx, payload.RequestId, payload.ApproverId, payload.Status); err != nil {
+			return err
+		}
+
+		utils.WriteJson(w, http.StatusOK, nil)
+		return nil
+	})
+
 }
 
 func (h *Handler) CreateVacationRequest(w http.ResponseWriter, r *http.Request) {
@@ -68,7 +93,11 @@ func (h *Handler) CreateVacationRequest(w http.ResponseWriter, r *http.Request) 
 		}
 
 		if err := h.vacationStore.CreateVacationRequest(tx, request); err != nil {
-			utils.WriteError(w, http.StatusInternalServerError, err)
+			return err
+		}
+
+		// Create ApprovalItem for teamlead, here should also item be created for the
+		if err := h.vacationStore.CreateApprovalEntry(tx, request.Id, request.ToUserId); err != nil {
 			return err
 		}
 

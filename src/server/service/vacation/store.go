@@ -34,9 +34,25 @@ func (s *Store) GetVacationRequestsFromUserId(requestedFromId string) ([]types.V
 }
 
 func (s *Store) UpdateVacationStatus(execable interface{}, requestId string, approverId string, status types.ApprovalStatus) error {
+	_, err := utils.Exec(execable, "UPDATE vacation_approvals SET status = ?, changedAt = UTC_TIMESTAMP WHERE request_Id = ? and approver_id = ?",
+		status, requestId, approverId)
+
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (s *Store) GetApprovalsForRequest(requestId string) ([]types.VacationApproval, error) {
 	return nil, nil
+}
+
+func (s *Store) CreateApprovalEntry(execable interface{}, requestId string, approverId string) error {
+	_, err := utils.Exec(execable, "INSERT INTO vacation_approvals (request_Id, approver_Id, status, changedAt) VALUES (?, ?, ?, UTC_TIMESTAMP)",
+		requestId, approverId, types.APPROVAL_OPEN)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }

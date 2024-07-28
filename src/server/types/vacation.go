@@ -64,7 +64,7 @@ type VacationApproval struct {
 }
 
 type VacationApprovalPayload struct {
-	RequestId  string         `json:"requestId"`
-	ApproverId string         `json:"approverId"`
-	Status     ApprovalStatus `json:"status"`
+	RequestId  string         `json:"requestId" validate:"required"`
+	ApproverId string         `json:"approverId" validate:"required"`
+	Status     ApprovalStatus `json:"status" validate:"required"`
 }
