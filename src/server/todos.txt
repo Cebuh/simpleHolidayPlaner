@@ -4,15 +4,12 @@
     - implement air in docker container
 
 - [x] setup docker and docker compose
-    - should create migrations and setup air
+    [x] - docker compose should setup database, run migrations and run service
+    - air should run in docker container
 
 - [x] use utc times when creating tables
 
 - [x] implement transactions for database actions
-
-- use swagger
-
-- implement swagger for documentation and testing purpose
 
 - create a database seeder
     - [x] seed users
@@ -22,10 +19,10 @@
 
 - [x] team needs admin, member roletypes
 - [x] rename a team
-- only admin can invite to team 
+- only admin can invite to team
 - only admin can edit team & remove member
-- admin can send invites 
-    - [x] Table 'Invites'   
+- admin can send invites
+    - [x] Table 'Invites'
         - Id, InviteType ('TEAMINVITE, 'GROUPINVITE'), FromUser, ToUser, status ('DECLINED, APPROVED ,OPEN')
     - [x] when user accept invite, the user joins the team
 
@@ -37,17 +34,20 @@
 
 - forgot password
 
-- vacation request 
-    - TABLE "Requests 
+- vacation request
+    - [x] TABLE "Requests
         - "id, requestedFrom, teamId, fromDate, toDate, info, status, dayFactor (forenoon etc.)
             - status = "OPEN, SUBSTITUTED_MEMBER, SUBSTITUTED_TEAMLEAD, APPROVED, DECLINED, REJECTED"
-    - TABLE "VacationApproval"
+    - [x] TABLE "VacationApproval"
         - "requestID, approverId (userId), status"
             - status = "OPEN, APPROVED, DECLINED"
-    - create a request
-    - set state of a request
-    
+    - [x] create a request
+    - [x] set state of a request
+    - get all open requests for me
+    - get all requests with state and date
 
+
+// Maybe use Keycloak
 - user profile informations
     - vacation sum
     - current vacations
@@ -56,4 +56,3 @@
 
 - user vacation history
     - vacations which are already used (approved and is already in the past)
-    

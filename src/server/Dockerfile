@@ -12,4 +12,4 @@ WORKDIR /app/cmd
 
 RUN go build -o /app/main .
 
-EXPOSE 8081
+EXPOSE 8080

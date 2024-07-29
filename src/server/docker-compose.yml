@@ -3,42 +3,70 @@ version: "3.8"
 services:
   db:
     image: mariadb:latest
-    container_name: mariadb
+    container_name: db_mysql
     environment:
       MYSQL_ROOT_PASSWORD: admin
       MYSQL_DATABASE: SHP
-    # healthcheck:
-    #   test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
-    #   timeout: 8s
-    #   retries: 10
+      ROOT_PASSWORD: admin
+      MYSQL_USER: root
+      MYSQL_PASSWORD: admin
+    command:
+      - --max_allowed_packet=64M
+      - --wait_timeout=28800
+      - --interactive_timeout=28800
+    healthcheck:
+      test:
+        ["CMD", "mysqladmin", "ping", "-h", "db_mysql", "-u", "root", "-padmin"]
+      interval: 5s
+      retries: 3
     ports:
       - "3306:3306"
     volumes:
+      - db_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - fullstack
 
-  # migrate:
-  #   image: migrate/migrate
-  #   volumes:
-  #     - ./cmd/migrate/migrations:/migrations
-  #   command:
-  #     [
-  #       "-path",
-  #       "/migrations",
-  #       "-database",
-  #       "mysql://root:admin@tcp(db:3306)/SHP",
-  #       "up",
-  #       "4",
-  #     ]
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
+  migrate:
+    image: golang:1.22
+    working_dir: /app
+    command: ["sh", "-c", "go run cmd/migrate/main.go up"]
+    volumes:
+      - .:/app
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=admin
+      - DB_NAME=SHP
+    depends_on:
+      - db
+    networks:
+      - fullstack
 
   go-service:
     build: .
     container_name: go-service
     ports:
-      - "8081:8081"
+      - "8080:8080"
+    environment:
+      - DB_HOST=db_mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=admin
+      - DB_NAME=SHP
     depends_on:
-      - db
-      # - migrate
+      migrate:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
     command: ["/app/main"]
+    networks:
+      - fullstack
+
+volumes:
+  db_data:
+
+networks:
+  fullstack:
+    driver: bridge

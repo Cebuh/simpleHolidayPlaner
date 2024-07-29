@@ -25,7 +25,8 @@ func NewHandler(db *sql.DB, userStore types.UserStore, teamStore types.TeamStore
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/vacations/request", h.CreateVacationRequest).Methods(http.MethodPost)
-	router.HandleFunc("/vacations/request/updateApproval", h.UpdateRequestApproval).Methods(http.MethodPost)
+	router.HandleFunc("/vacations/requests/updateApproval", h.UpdateRequestApproval).Methods(http.MethodPost)
+	router.HandleFunc("/vacations/requests/open", h.UpdateRequestApproval).Methods(http.MethodPost)
 }
 
 func (h *Handler) UpdateRequestApproval(w http.ResponseWriter, r *http.Request) {
